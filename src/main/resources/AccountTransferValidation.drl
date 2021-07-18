@@ -1,0 +1,16 @@
+import  com.yellowpepper.challenge.domain.TaxTransferRequest;
+
+rule "Tax for high amount"
+    when
+        taxObject : TaxTransferRequest( amount > 100 );
+    then
+        taxObject.setTax(0.5);
+end;
+
+rule "Tax for low amount"
+    when
+        taxObject : TaxTransferRequest( amount <= 100 );
+    then
+        taxObject.setTax(0.2);
+end;
+

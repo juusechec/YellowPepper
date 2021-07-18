@@ -1,33 +1,33 @@
 package com.yellowpepper.challenge.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
-public class ResponseCreateTransactionDto {
-    private String status;
-    private String[] errors;
-    private BigDecimal account_balance;
+public class ResponseCreateTransactionDto extends ResponseBaseDto {
+    @JsonProperty(value= "tax_collected")
+    private BigDecimal taxCollected;
 
-    public String getStatus() {
-        return status;
+    @JsonProperty(value= "CAD")
+    private BigDecimal canadianExchange;
+
+    public ResponseCreateTransactionDto() {
+        super();
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public BigDecimal getTaxCollected() {
+        return taxCollected;
     }
 
-    public String[] getErrors() {
-        return errors;
+    public void setTaxCollected(BigDecimal taxCollected) {
+        this.taxCollected = taxCollected;
     }
 
-    public void setErrors(String[] errors) {
-        this.errors = errors;
+    public BigDecimal getCanadianExchange() {
+        return canadianExchange;
     }
 
-    public BigDecimal getAccount_balance() {
-        return account_balance;
-    }
-
-    public void setAccount_balance(BigDecimal account_balance) {
-        this.account_balance = account_balance;
+    public void setCanadianExchange(BigDecimal canadianExchange) {
+        this.canadianExchange = canadianExchange;
     }
 }

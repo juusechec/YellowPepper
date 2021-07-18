@@ -1,16 +1,16 @@
 package com.yellowpepper.challenge.controller;
 
 import com.yellowpepper.challenge.domain.TaxTransferRequest;
+import com.yellowpepper.challenge.dto.RequestCreateTransactionDto;
 import com.yellowpepper.challenge.dto.RequestRetrieveAccountDto;
+import com.yellowpepper.challenge.dto.ResponseCreateTransactionDto;
 import com.yellowpepper.challenge.dto.ResponseRetrieveAccountDto;
-import com.yellowpepper.challenge.repository.AccountRepository;
-import com.yellowpepper.challenge.repository.model.Account;
-import com.yellowpepper.challenge.service.RetrieveAccountService;
+import com.yellowpepper.challenge.service.AccountService;
+import com.yellowpepper.challenge.service.TransferService;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -19,7 +19,10 @@ import java.math.BigDecimal;
 public class FixedDepositRateController {
 
     @Autowired
-    RetrieveAccountService retrieveAccountService;
+    AccountService retrieveAccountService;
+
+    @Autowired
+    TransferService transferService;
 
     private final KieContainer kieContainer;
 
@@ -43,7 +46,7 @@ public class FixedDepositRateController {
     }
 
     @RequestMapping(value = "/v1/transactions", method = RequestMethod.POST, produces = "application/json")
-    public ResponseRetrieveAccountDto createTransactions(@RequestBody RequestRetrieveAccountDto requestRetrieveAccountDto) {
-        return retrieveAccountService.getResponseBody(requestRetrieveAccountDto);
+    public Mono<ResponseCreateTransactionDto> createTransactions(@RequestBody RequestCreateTransactionDto requestCreateTransactionDto) {
+        return transferService.createTransfer(requestCreateTransactionDto);
     }
 }

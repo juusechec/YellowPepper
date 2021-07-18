@@ -33,6 +33,12 @@ CREATE TABLE transfer (
     id_currency INT NOT NULL,
     datetime TIMESTAMP NOT NULL,
     status VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_origin_account_transfer
+      FOREIGN KEY(id_origin_account)
+      REFERENCES account(id),
+    CONSTRAINT fk_destination_account_transfer
+      FOREIGN KEY(id_destination_account)
+      REFERENCES account(id),
     CONSTRAINT fk_currency_transfer
       FOREIGN KEY(id_currency)
       REFERENCES currency(id)

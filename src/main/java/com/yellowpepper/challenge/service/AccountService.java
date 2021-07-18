@@ -2,6 +2,7 @@ package com.yellowpepper.challenge.service;
 
 import com.yellowpepper.challenge.dto.RequestRetrieveAccountDto;
 import com.yellowpepper.challenge.dto.ResponseRetrieveAccountDto;
+import com.yellowpepper.challenge.exception.AccountNotFoundException;
 import com.yellowpepper.challenge.repository.AccountRepository;
 import com.yellowpepper.challenge.repository.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
-public class RetrieveAccountService {
+public class AccountService {
     @Autowired
     AccountRepository accountRepository;
 
@@ -17,17 +18,13 @@ public class RetrieveAccountService {
         Integer id = Integer.valueOf(requestRetrieveAccountDto.getAccount());
         Mono<Account> accountMono = accountRepository.findById(id);
         Account account = accountMono.block();
-        ResponseRetrieveAccountDto responseRetrieveAccountDto = new ResponseRetrieveAccountDto();
         if (account == null) {
-            responseRetrieveAccountDto.setStatus("ERROR");
-            String[] errors = {"The request Account doesn't exits"};
-            responseRetrieveAccountDto.setErrors(errors);
+            throw new AccountNotFoundException(String.format("User with id %s not found in the database", id));
         } else {
+            ResponseRetrieveAccountDto responseRetrieveAccountDto = new ResponseRetrieveAccountDto();
             responseRetrieveAccountDto.setStatus("OK");
             responseRetrieveAccountDto.setAccountBalance(account.getAmount());
-            String[] errors = {};
-            responseRetrieveAccountDto.setErrors(errors);
+            return responseRetrieveAccountDto;
         }
-        return responseRetrieveAccountDto;
     }
 }
