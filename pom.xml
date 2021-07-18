@@ -8,16 +8,20 @@
         <version>2.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.techgeeknext.examples</groupId>
-    <artifactId>drools-demo</artifactId>
+    <groupId>com.yellowpepper.challenge</groupId>
+    <artifactId>funds-transfer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>drools-demo</name>
-    <description>Demo project for Drools Spring Boot</description>
+    <name>funds-transfer</name>
+    <description>Transferring funds between two savings accounts based on some business rules</description>
     <properties>
         <java.version>11</java.version>
         <drools.version>7.49.0.Final</drools.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -41,6 +45,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
