@@ -40,3 +40,8 @@ POST /v1/transactions/
 
 Problem understanding map and flatmap https://stackoverflow.com/questions/50080386/map-vs-flatmap-in-spring-web-flux-and-reactor
 
+
+Format google java code
+
+logging with logger
+

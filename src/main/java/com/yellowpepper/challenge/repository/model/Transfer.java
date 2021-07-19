@@ -7,90 +7,88 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Transfer {
-    @Id
-    private Integer id;
+  @Id private Integer id;
 
-    @Column("id_origin_account")
-    private Integer idOriginAccount;
+  @Column("id_origin_account")
+  private Integer idOriginAccount;
 
-    @Column("id_destination_account")
-    private Integer idDestinationAccount;
+  @Column("id_destination_account")
+  private Integer idDestinationAccount;
 
-    private BigDecimal amount;
+  private BigDecimal amount;
 
-    private BigDecimal tax;
+  private BigDecimal tax;
 
-    @Column("id_currency")
-    private Integer idCurrency;
+  @Column("id_currency")
+  private Integer idCurrency;
 
-    private LocalDateTime datetime;
+  private LocalDateTime datetime;
 
-    private String status;
+  private String status;
 
-    public Transfer() {
-    }
+  public Transfer() {}
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public Integer getIdOriginAccount() {
-        return idOriginAccount;
-    }
+  public Integer getIdOriginAccount() {
+    return idOriginAccount;
+  }
 
-    public void setIdOriginAccount(Integer idOriginAccount) {
-        this.idOriginAccount = idOriginAccount;
-    }
+  public void setIdOriginAccount(Integer idOriginAccount) {
+    this.idOriginAccount = idOriginAccount;
+  }
 
-    public Integer getIdDestinationAccount() {
-        return idDestinationAccount;
-    }
+  public Integer getIdDestinationAccount() {
+    return idDestinationAccount;
+  }
 
-    public void setIdDestinationAccount(Integer idDestinationAccount) {
-        this.idDestinationAccount = idDestinationAccount;
-    }
+  public void setIdDestinationAccount(Integer idDestinationAccount) {
+    this.idDestinationAccount = idDestinationAccount;
+  }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+  public BigDecimal getAmount() {
+    return amount;
+  }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
 
-    public Integer getIdCurrency() {
-        return idCurrency;
-    }
+  public Integer getIdCurrency() {
+    return idCurrency;
+  }
 
-    public void setIdCurrency(Integer idCurrency) {
-        this.idCurrency = idCurrency;
-    }
+  public void setIdCurrency(Integer idCurrency) {
+    this.idCurrency = idCurrency;
+  }
 
-    public LocalDateTime getDatetime() {
-        return datetime;
-    }
+  public LocalDateTime getDatetime() {
+    return datetime;
+  }
 
-    public void setDatetime(LocalDateTime datetime) {
-        this.datetime = datetime;
-    }
+  public void setDatetime(LocalDateTime datetime) {
+    this.datetime = datetime;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public BigDecimal getTax() {
-        return tax;
-    }
+  public BigDecimal getTax() {
+    return tax;
+  }
 
-    public void setTax(BigDecimal tax) {
-        this.tax = tax;
-    }
+  public void setTax(BigDecimal tax) {
+    this.tax = tax;
+  }
 }

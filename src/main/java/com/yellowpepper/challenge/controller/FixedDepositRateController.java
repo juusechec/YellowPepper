@@ -13,19 +13,25 @@ import reactor.core.publisher.Mono;
 @RestController
 public class FixedDepositRateController {
 
-    @Autowired
-    AccountService retrieveAccountService;
+  @Autowired AccountService retrieveAccountService;
 
-    @Autowired
-    TransferService transferService;
+  @Autowired TransferService transferService;
 
-    @RequestMapping(value = "/v1/customers/130303/retrieve-account", method = RequestMethod.POST, produces = "application/json")
-    public Mono<ResponseRetrieveAccountDto> getAccount(@RequestBody RequestRetrieveAccountDto requestRetrieveAccountDto) {
-        return retrieveAccountService.getResponseBody(requestRetrieveAccountDto);
-    }
+  @RequestMapping(
+      value = "/v1/customers/130303/retrieve-account",
+      method = RequestMethod.POST,
+      produces = "application/json")
+  public Mono<ResponseRetrieveAccountDto> getAccount(
+      @RequestBody RequestRetrieveAccountDto requestRetrieveAccountDto) {
+    return retrieveAccountService.getResponseBody(requestRetrieveAccountDto);
+  }
 
-    @RequestMapping(value = "/v1/transactions", method = RequestMethod.POST, produces = "application/json")
-    public Mono<ResponseCreateTransactionDto> createTransactions(@RequestBody RequestCreateTransactionDto requestCreateTransactionDto) {
-        return transferService.createTransfer(requestCreateTransactionDto);
-    }
+  @RequestMapping(
+      value = "/v1/transactions",
+      method = RequestMethod.POST,
+      produces = "application/json")
+  public Mono<ResponseCreateTransactionDto> createTransactions(
+      @RequestBody RequestCreateTransactionDto requestCreateTransactionDto) {
+    return transferService.createTransfer(requestCreateTransactionDto);
+  }
 }

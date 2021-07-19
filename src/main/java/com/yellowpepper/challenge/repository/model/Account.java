@@ -6,48 +6,46 @@ import org.springframework.data.relational.core.mapping.Column;
 import java.math.BigDecimal;
 
 public class Account {
-    @Id
-    private Integer id;
+  @Id private Integer id;
 
-    private Integer idHolder;
+  private Integer idHolder;
 
-    private BigDecimal amount;
+  private BigDecimal amount;
 
-    @Column("id_currency")
-    private Integer idCurrency;
+  @Column("id_currency")
+  private Integer idCurrency;
 
-    public Account() {
-    }
+  public Account() {}
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public Integer getIdHolder() {
-        return idHolder;
-    }
+  public Integer getIdHolder() {
+    return idHolder;
+  }
 
-    public void setIdHolder(Integer idHolder) {
-        this.idHolder = idHolder;
-    }
+  public void setIdHolder(Integer idHolder) {
+    this.idHolder = idHolder;
+  }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+  public BigDecimal getAmount() {
+    return amount;
+  }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
 
-    public Integer getIdCurrency() {
-        return idCurrency;
-    }
+  public Integer getIdCurrency() {
+    return idCurrency;
+  }
 
-    public void setIdCurrency(Integer idCurrency) {
-        this.idCurrency = idCurrency;
-    }
+  public void setIdCurrency(Integer idCurrency) {
+    this.idCurrency = idCurrency;
+  }
 }

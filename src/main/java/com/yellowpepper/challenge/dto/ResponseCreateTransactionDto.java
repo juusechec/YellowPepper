@@ -5,30 +5,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 public class ResponseCreateTransactionDto extends ResponseBaseDto {
-    @JsonProperty(value = "tax_collected")
-    private BigDecimal taxCollected;
+  @JsonProperty(value = "tax_collected")
+  private BigDecimal taxCollected;
 
-    @JsonProperty(value = "CAD")
-    private BigDecimal canadianExchange;
+  @JsonProperty(value = "CAD")
+  private BigDecimal canadianExchange;
 
-    public ResponseCreateTransactionDto() {
-        super();
-        this.taxCollected = new BigDecimal(0);
-    }
+  public ResponseCreateTransactionDto() {
+    super();
+    this.taxCollected = new BigDecimal(0);
+  }
 
-    public BigDecimal getTaxCollected() {
-        return taxCollected;
-    }
+  public BigDecimal getTaxCollected() {
+    return taxCollected;
+  }
 
-    public void setTaxCollected(BigDecimal taxCollected) {
-        this.taxCollected = taxCollected;
-    }
+  public void setTaxCollected(BigDecimal taxCollected) {
+    this.taxCollected = taxCollected;
+  }
 
-    public BigDecimal getCanadianExchange() {
-        return canadianExchange;
-    }
+  public BigDecimal getCanadianExchange() {
+    return canadianExchange;
+  }
 
-    public void setCanadianExchange(BigDecimal canadianExchange) {
-        this.canadianExchange = canadianExchange;
-    }
+  public void setCanadianExchange(BigDecimal canadianExchange) {
+    this.canadianExchange = canadianExchange;
+  }
 }

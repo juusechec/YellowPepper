@@ -5,35 +5,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 public class RequestCreateTransactionDto {
-    private BigDecimal amount;
+  private BigDecimal amount;
 
-    private String currency;
+  private String currency;
 
-    @JsonProperty(value = "origin_account")
-    private Integer originAccount;
+  @JsonProperty(value = "origin_account")
+  private Integer originAccount;
 
-    @JsonProperty(value = "destination_account")
-    private Integer destinationAccount;
+  @JsonProperty(value = "destination_account")
+  private Integer destinationAccount;
 
-    private String description;
+  private String description;
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+  public BigDecimal getAmount() {
+    return amount;
+  }
 
-    public String getCurrency() {
-        return currency;
-    }
+  public String getCurrency() {
+    return currency;
+  }
 
-    public Integer getOriginAccount() {
-        return originAccount;
-    }
+  public Integer getOriginAccount() {
+    return originAccount;
+  }
 
-    public Integer getDestinationAccount() {
-        return destinationAccount;
-    }
+  public Integer getDestinationAccount() {
+    return destinationAccount;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 }
