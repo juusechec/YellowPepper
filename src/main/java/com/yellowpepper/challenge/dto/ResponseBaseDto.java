@@ -26,6 +26,6 @@ public class ResponseBaseDto {
     }
 
     public void addError(String error) {
-        this.errors = new String []{error};
+        this.errors = new String[]{error};
     }
 }

@@ -1,4 +1,5 @@
 package com.yellowpepper.challenge.repository;
+
 import com.yellowpepper.challenge.repository.model.Currency;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;

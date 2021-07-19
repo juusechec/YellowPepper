@@ -63,9 +63,9 @@ public class TransferService {
 
             Mono<Account> accountDestinationMono = accountRepository.findById(idAccountDestination);
 
-            Mono<Integer> numTodayTransactionsFlux =  accountRepository.getNumTodayTransactions(idAccountOrigin).next();
+            Mono<Integer> numTodayTransactionsFlux = accountRepository.getNumTodayTransactions(idAccountOrigin).next();
 
-            return Mono.zip(accountOriginMono, accountDestinationMono, transferMono, numTodayTransactionsFlux).flatMap( data -> {
+            return Mono.zip(accountOriginMono, accountDestinationMono, transferMono, numTodayTransactionsFlux).flatMap(data -> {
                 return discountTransfer(data.getT1(), data.getT2(), data.getT3(), data.getT4());
             });
         } else {

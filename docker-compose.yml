@@ -15,7 +15,7 @@ services:
       - POSTGRES_DBNAME=yellowpepper
       #- POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "yellowpepper", "-P", "yellowpepper"]
+      test: [ "CMD", "pg_isready", "-U", "yellowpepper", "-P", "yellowpepper" ]
       interval: 5s
       timeout: 5s
       retries: 5

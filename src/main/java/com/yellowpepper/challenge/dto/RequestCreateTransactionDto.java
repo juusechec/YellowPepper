@@ -9,10 +9,10 @@ public class RequestCreateTransactionDto {
 
     private String currency;
 
-    @JsonProperty(value= "origin_account")
+    @JsonProperty(value = "origin_account")
     private Integer originAccount;
 
-    @JsonProperty(value= "destination_account")
+    @JsonProperty(value = "destination_account")
     private Integer destinationAccount;
 
     private String description;

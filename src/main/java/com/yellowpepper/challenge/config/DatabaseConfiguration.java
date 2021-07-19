@@ -11,7 +11,7 @@ import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator;
 @Configuration
 public class DatabaseConfiguration {
 
-    @Value( "${spring.r2dbc.initialization-mode}" )
+    @Value("${spring.r2dbc.initialization-mode}")
     String initializationMode;
 
     @Bean

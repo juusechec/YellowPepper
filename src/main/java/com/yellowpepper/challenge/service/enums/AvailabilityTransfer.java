@@ -11,7 +11,7 @@ public enum AvailabilityTransfer {
         this.label = label;
     }
 
-    public AvailabilityTransfer getValue(){
+    public AvailabilityTransfer getValue() {
         return this;
     }
 }

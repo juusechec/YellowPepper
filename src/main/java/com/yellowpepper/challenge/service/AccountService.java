@@ -20,9 +20,9 @@ public class AccountService {
         Integer id = Integer.valueOf(requestRetrieveAccountDto.getAccount());
         Mono<Account> accountMono = accountRepository.findById(id);
         return accountMono.map(account -> getResponseObject("OK", account.getAmount()))
-        .switchIfEmpty(Mono.defer(() -> {
-            throw new AccountNotFoundException(String.format("User with id %s not found in the database", id));
-        }));
+                .switchIfEmpty(Mono.defer(() -> {
+                    throw new AccountNotFoundException(String.format("User with id %s not found in the database", id));
+                }));
     }
 
     public ResponseRetrieveAccountDto getResponseObject(String status, BigDecimal amount) {

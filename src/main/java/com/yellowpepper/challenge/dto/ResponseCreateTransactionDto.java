@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 public class ResponseCreateTransactionDto extends ResponseBaseDto {
-    @JsonProperty(value= "tax_collected")
+    @JsonProperty(value = "tax_collected")
     private BigDecimal taxCollected;
 
-    @JsonProperty(value= "CAD")
+    @JsonProperty(value = "CAD")
     private BigDecimal canadianExchange;
 
     public ResponseCreateTransactionDto() {
