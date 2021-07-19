@@ -9,22 +9,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
+
 @Service
 public class AccountService {
     @Autowired
     AccountRepository accountRepository;
 
-    public ResponseRetrieveAccountDto getResponseBody(RequestRetrieveAccountDto requestRetrieveAccountDto) {
+    public Mono<ResponseRetrieveAccountDto> getResponseBody(RequestRetrieveAccountDto requestRetrieveAccountDto) {
         Integer id = Integer.valueOf(requestRetrieveAccountDto.getAccount());
         Mono<Account> accountMono = accountRepository.findById(id);
-        Account account = accountMono.block();
-        if (account == null) {
+        return accountMono.map(account -> getResponseObject("OK", account.getAmount()))
+        .switchIfEmpty(Mono.defer(() -> {
             throw new AccountNotFoundException(String.format("User with id %s not found in the database", id));
-        } else {
-            ResponseRetrieveAccountDto responseRetrieveAccountDto = new ResponseRetrieveAccountDto();
-            responseRetrieveAccountDto.setStatus("OK");
-            responseRetrieveAccountDto.setAccountBalance(account.getAmount());
-            return responseRetrieveAccountDto;
-        }
+        }));
+    }
+
+    public ResponseRetrieveAccountDto getResponseObject(String status, BigDecimal amount) {
+        ResponseRetrieveAccountDto responseRetrieveAccountDto = new ResponseRetrieveAccountDto();
+        responseRetrieveAccountDto.setStatus(status);
+        responseRetrieveAccountDto.setAccountBalance(amount);
+        return responseRetrieveAccountDto;
     }
 }
