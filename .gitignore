@@ -41,4 +41,5 @@ secrets.yml
 .gradletasknamecache
 .sts4-cache
 .idea
-postgres-data
+/postgres-data
+/h2-data
