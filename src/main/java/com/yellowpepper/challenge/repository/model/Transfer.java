@@ -26,7 +26,9 @@ public class Transfer {
 
   private String status;
 
-  public Transfer() {}
+  public Transfer() {
+    // Do nothing
+  }
 
   public Integer getId() {
     return id;

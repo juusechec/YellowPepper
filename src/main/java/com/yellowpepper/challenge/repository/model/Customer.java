@@ -17,7 +17,9 @@ public class Customer {
   @Column("second_surname")
   private String secondSurname;
 
-  public Customer() {}
+  public Customer() {
+    // Do nothing
+  }
 
   public Integer getId() {
     return id;

@@ -17,19 +17,13 @@ public class FixedDepositRateController {
 
   @Autowired TransferService transferService;
 
-  @RequestMapping(
-      value = "/v1/customers/130303/retrieve-account",
-      method = RequestMethod.POST,
-      produces = "application/json")
+  @PostMapping(value = "/v1/customers/130303/retrieve-account", produces = "application/json")
   public Mono<ResponseRetrieveAccountDto> getAccount(
       @RequestBody RequestRetrieveAccountDto requestRetrieveAccountDto) {
     return retrieveAccountService.getResponseBody(requestRetrieveAccountDto);
   }
 
-  @RequestMapping(
-      value = "/v1/transactions",
-      method = RequestMethod.POST,
-      produces = "application/json")
+  @PostMapping(value = "/v1/transactions", produces = "application/json")
   public Mono<ResponseCreateTransactionDto> createTransactions(
       @RequestBody RequestCreateTransactionDto requestCreateTransactionDto) {
     return transferService.createTransfer(requestCreateTransactionDto);

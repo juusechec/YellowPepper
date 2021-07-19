@@ -12,12 +12,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
   private static final String STATUS = "status";
   private static final String DESCRIPTION = "description";
   private static final String STATUS_KO = "KO";
+
+  private static final Logger LOGGER = Logger.getLogger(RestExceptionHandler.class.getName());
 
   private final ObjectMapper mapper = new ObjectMapper();
 
@@ -27,7 +31,7 @@ public class RestExceptionHandler {
     ObjectNode errors = mapper.createObjectNode();
     errors.put(STATUS, STATUS_KO);
     errors.putPOJO(DESCRIPTION, ex.getCause());
-    ex.printStackTrace();
+    LOGGER.log(Level.SEVERE, "an exception was thrown", ex);
     return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 

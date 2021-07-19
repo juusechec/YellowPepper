@@ -15,7 +15,9 @@ public class Account {
   @Column("id_currency")
   private Integer idCurrency;
 
-  public Account() {}
+  public Account() {
+    // Do nothing
+  }
 
   public Integer getId() {
     return id;

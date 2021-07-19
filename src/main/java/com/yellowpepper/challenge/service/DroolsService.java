@@ -8,6 +8,7 @@ import org.kie.api.runtime.KieSession;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
@@ -26,7 +27,9 @@ public class DroolsService {
     kieSession.insert(taxTransferRequest);
     kieSession.fireAllRules();
     kieSession.dispose();
-    LOGGER.info(String.format("Tax: %s", taxTransferRequest.getTax()));
+    if (LOGGER.isLoggable(Level.INFO)) {
+      LOGGER.log(Level.INFO, "Tax: {0}", taxTransferRequest.getTax());
+    }
     return taxTransferRequest.getTax();
   }
 
@@ -42,7 +45,12 @@ public class DroolsService {
     kieSession.insert(accountTransferValidationRequest);
     kieSession.fireAllRules();
     kieSession.dispose();
-    LOGGER.info(String.format("Amount to transfer: %s", accountTransferValidationRequest.getAmountToTransfer()));
+    if (LOGGER.isLoggable(Level.INFO)) {
+      LOGGER.log(
+          Level.INFO,
+          "Amount to transfer: {0}",
+          accountTransferValidationRequest.getAmountToTransfer());
+    }
     return accountTransferValidationRequest.getAvailability();
   }
 }

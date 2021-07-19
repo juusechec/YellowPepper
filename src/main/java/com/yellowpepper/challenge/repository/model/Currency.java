@@ -9,7 +9,9 @@ public class Currency {
 
   private String abbreviation;
 
-  public Currency() {}
+  public Currency() {
+    // Do nothing
+  }
 
   public Integer getId() {
     return id;
