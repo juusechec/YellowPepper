@@ -30,6 +30,7 @@ CREATE TABLE transfer (
     id_origin_account INT NOT NULL,
     id_destination_account INT NOT NULL,
     amount DECIMAL NOT NULL,
+    tax DECIMAL,
     id_currency INT NOT NULL,
     datetime TIMESTAMP NOT NULL,
     status VARCHAR(255) NOT NULL,

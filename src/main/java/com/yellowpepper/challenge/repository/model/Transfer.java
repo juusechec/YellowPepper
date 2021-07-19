@@ -18,6 +18,8 @@ public class Transfer {
 
     private BigDecimal amount;
 
+    private BigDecimal tax;
+
     @Column("id_currency")
     private Integer idCurrency;
 
@@ -82,5 +84,13 @@ public class Transfer {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public BigDecimal getTax() {
+        return tax;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
     }
 }

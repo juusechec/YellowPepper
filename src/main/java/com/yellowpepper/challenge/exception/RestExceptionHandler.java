@@ -48,4 +48,13 @@ public class RestExceptionHandler {
         responseCreateTransactionDto.addError(ex.getMessage());
         return new ResponseEntity<>(responseCreateTransactionDto, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<Object> insufficientFunds(HttpServletRequest req, InsufficientFundsException ex) {
+        ResponseCreateTransactionDto responseCreateTransactionDto = new ResponseCreateTransactionDto();
+        responseCreateTransactionDto.setStatus(STATUS_KO);
+        responseCreateTransactionDto.addError(ex.getMessage());
+        return new ResponseEntity<>(responseCreateTransactionDto, new HttpHeaders(), HttpStatus.PRECONDITION_FAILED);
+    }
 }

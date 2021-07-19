@@ -38,3 +38,5 @@ POST /v1/transactions/
     "CAD": 66,928861615
 }
 
+Problem understanding map and flatmap https://stackoverflow.com/questions/50080386/map-vs-flatmap-in-spring-web-flux-and-reactor
+

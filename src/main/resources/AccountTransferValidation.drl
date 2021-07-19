@@ -1,16 +1,16 @@
-import  com.yellowpepper.challenge.domain.TaxTransferRequest;
+import  com.yellowpepper.challenge.domain.AccountTransferValidationRequest;
 
-rule "Tax for high amount"
+rule "account without funds"
     when
-        taxObject : TaxTransferRequest( amount > 100 );
+        validationObject : AccountTransferValidationRequest( accountAmount < amountToTransfer * (1+tax) );
     then
-        taxObject.setTax(0.5);
+        validationObject.setAvailability("NO_FUNDS");
 end;
 
-rule "Tax for low amount"
+rule "account limits"
     when
-        taxObject : TaxTransferRequest( amount <= 100 );
+        validationObject : AccountTransferValidationRequest( timesAccountTransaction >= 3 );
     then
-        taxObject.setTax(0.2);
+        validationObject.setAvailability("LIMITS_EXCEED");
 end;
 

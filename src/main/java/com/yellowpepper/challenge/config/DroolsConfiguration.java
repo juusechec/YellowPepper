@@ -18,6 +18,7 @@ public class DroolsConfiguration {
     public KieContainer getKieContainer() {
         KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
         kieFileSystem.write(ResourceFactory.newClassPathResource("TaxTransfer.drl"));
+        kieFileSystem.write(ResourceFactory.newClassPathResource("AccountTransferValidation.drl"));
         KieBuilder kb = kieServices.newKieBuilder(kieFileSystem);
         kb.buildAll();
         KieModule kieModule = kb.getKieModule();

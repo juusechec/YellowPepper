@@ -5,6 +5,6 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 
 public interface AccountRepository extends ReactiveCrudRepository<Account, Integer> {
-    @Query("SELECT count(*) FROM transfer WHERE id_origin_account = :idOriginAccount AND datetime >= CAST(current_timestamp AS DATE)")
+    @Query("SELECT count(*) FROM transfer WHERE id_origin_account = :idOriginAccount AND datetime >= CAST(current_timestamp AS DATE) AND status = 'DONE'")
     public Flux<Integer> getNumTodayTransactions(Integer idOriginAccount);
 }

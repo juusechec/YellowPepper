@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class TaxTransferRequest {
     private BigDecimal amount;
-    private double tax;
+    private Double tax;
 
     public TaxTransferRequest(BigDecimal amount) {
         this.amount = amount;
@@ -18,11 +18,11 @@ public class TaxTransferRequest {
         this.amount = amount;
     }
 
-    public double getTax() {
+    public Double getTax() {
         return tax;
     }
 
-    public void setTax(double tax) {
+    public void setTax(Double tax) {
         this.tax = tax;
     }
 }
