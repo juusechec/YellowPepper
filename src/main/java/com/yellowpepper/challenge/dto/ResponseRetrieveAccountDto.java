@@ -10,6 +10,7 @@ public class ResponseRetrieveAccountDto extends ResponseBaseDto {
 
   public ResponseRetrieveAccountDto() {
     super();
+    this.accountBalance = BigDecimal.valueOf(0);
   }
 
   public BigDecimal getAccountBalance() {

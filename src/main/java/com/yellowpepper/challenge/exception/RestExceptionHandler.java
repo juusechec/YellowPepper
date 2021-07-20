@@ -2,6 +2,7 @@ package com.yellowpepper.challenge.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yellowpepper.challenge.dto.ResponseBaseDto;
 import com.yellowpepper.challenge.dto.ResponseCreateTransactionDto;
 import com.yellowpepper.challenge.dto.ResponseRetrieveAccountDto;
 import org.springframework.http.HttpHeaders;
@@ -66,5 +67,15 @@ public class RestExceptionHandler {
     responseCreateTransactionDto.addError(ex.getMessage());
     return new ResponseEntity<>(
         responseCreateTransactionDto, new HttpHeaders(), HttpStatus.PRECONDITION_FAILED);
+  }
+
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(CustomerNotFoundException.class)
+  public ResponseEntity<Object> customerNotFound(
+      HttpServletRequest req, CustomerNotFoundException ex) {
+    ResponseBaseDto responseBaseDto = new ResponseBaseDto();
+    responseBaseDto.setStatus(STATUS_KO);
+    responseBaseDto.addError(ex.getMessage());
+    return new ResponseEntity<>(responseBaseDto, new HttpHeaders(), HttpStatus.NOT_FOUND);
   }
 }

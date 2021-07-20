@@ -17,15 +17,15 @@ public class AccountService {
 
   public Mono<ResponseRetrieveAccountDto> getResponseBody(
       RequestRetrieveAccountDto requestRetrieveAccountDto) {
-    Integer id = Integer.valueOf(requestRetrieveAccountDto.getAccount());
-    Mono<Account> accountMono = accountRepository.findById(id);
+    Integer accountId = Integer.valueOf(requestRetrieveAccountDto.getAccount());
+    Mono<Account> accountMono = accountRepository.findById(accountId);
     return accountMono
         .map(account -> getResponseObject("OK", account.getAmount()))
         .switchIfEmpty(
             Mono.defer(
                 () -> {
                   throw new AccountNotFoundException(
-                      String.format("User with id %s not found in the database", id));
+                      String.format("Account with id %s not found in the database", accountId));
                 }));
   }
 
