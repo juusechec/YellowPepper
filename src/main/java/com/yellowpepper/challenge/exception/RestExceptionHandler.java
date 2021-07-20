@@ -48,9 +48,8 @@ public class RestExceptionHandler {
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(CurrencyNotSupportedException.class)
-  public ResponseEntity<Object> currencyNotSupported(
-      HttpServletRequest req, CurrencyNotSupportedException ex) {
+  @ExceptionHandler({CurrencyNotSupportedException.class, WrongInformationException.class})
+  public ResponseEntity<Object> currencyNotSupported(HttpServletRequest req, RuntimeException ex) {
     ResponseCreateTransactionDto responseCreateTransactionDto = new ResponseCreateTransactionDto();
     responseCreateTransactionDto.setStatus(STATUS_KO);
     responseCreateTransactionDto.addError(ex.getMessage());
@@ -59,9 +58,9 @@ public class RestExceptionHandler {
   }
 
   @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
-  @ExceptionHandler(InsufficientFundsException.class)
+  @ExceptionHandler({InsufficientFundsException.class, AccountTransfersLimitExceedException.class})
   public ResponseEntity<Object> insufficientFunds(
-      HttpServletRequest req, InsufficientFundsException ex) {
+      HttpServletRequest req, RuntimeException ex) {
     ResponseCreateTransactionDto responseCreateTransactionDto = new ResponseCreateTransactionDto();
     responseCreateTransactionDto.setStatus(STATUS_KO);
     responseCreateTransactionDto.addError(ex.getMessage());

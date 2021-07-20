@@ -13,7 +13,8 @@ public class ResponseCreateTransactionDto extends ResponseBaseDto {
 
   public ResponseCreateTransactionDto() {
     super();
-    this.taxCollected = new BigDecimal(0);
+    this.taxCollected = BigDecimal.valueOf(0);
+    this.canadianExchange = BigDecimal.valueOf(0);
   }
 
   public BigDecimal getTaxCollected() {

@@ -2,8 +2,10 @@ package com.yellowpepper.challenge.service;
 
 import com.yellowpepper.challenge.dto.RequestCreateTransactionDto;
 import com.yellowpepper.challenge.dto.ResponseCreateTransactionDto;
+import com.yellowpepper.challenge.exception.AccountTransfersLimitExceedException;
 import com.yellowpepper.challenge.exception.CurrencyNotSupportedException;
 import com.yellowpepper.challenge.exception.InsufficientFundsException;
+import com.yellowpepper.challenge.exception.WrongInformationException;
 import com.yellowpepper.challenge.repository.AccountRepository;
 import com.yellowpepper.challenge.repository.CurrencyRepository;
 import com.yellowpepper.challenge.repository.TransferRepository;
@@ -65,7 +67,19 @@ public class TransferService {
       return Mono.zip(
               accountOriginMono, accountDestinationMono, transferMono, numTodayTransactionsFlux)
           .flatMap(
-              data -> discountTransfer(data.getT1(), data.getT2(), data.getT3(), data.getT4()));
+              data -> {
+                Account accountOrigin = data.getT1();
+                Account accountDestination = data.getT2();
+                Transfer transferStarted = data.getT3();
+                Integer numTodayTransactions = data.getT4();
+                return discountTransfer(
+                    accountOrigin, accountDestination, transferStarted, numTodayTransactions);
+              })
+          .switchIfEmpty(
+              Mono.defer(
+                  () -> {
+                    throw new WrongInformationException("Wrong parameters");
+                  }));
     } else {
       throw new CurrencyNotSupportedException(
           String.format("Currency %s not supported", abbreviationCurrency));
@@ -96,7 +110,7 @@ public class TransferService {
       return transferMono.map(
           a -> {
             LOGGER.warning("Updated state LIMITS_EXCEED");
-            throw new InsufficientFundsException("limit_exceeded");
+            throw new AccountTransfersLimitExceedException("limit_exceeded");
           });
     } else {
       double taxValue = origin.getAmount().doubleValue() * tax / 100;

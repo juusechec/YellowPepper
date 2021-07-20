@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -19,19 +22,132 @@ class WhenCustomerDoATransactionTest {
   private TestRestTemplate testRestTemplate = new TestRestTemplate();
 
   @Test
-  void WithRightOriginDestinationAndValidAmountShouldReceiveOkResponse() throws Exception {
+  void WithRightValidParamsAndValidAmountEqualsTo100ShouldReceiveOkResponseWith0_2Tax() throws Exception {
     ObjectNode transaction =
         getTransaction(
-            100.0, "USD", 2, 3, "Hey dude! I am sending you the money you loaned to me lastweek.");
+            100.0, "USD", 3, 4, "Transferring across accounts");
 
-    ObjectNode result =
-        testRestTemplate.postForObject(
-            "http://localhost:8080/v1/transactions", transaction, ObjectNode.class);
+    HttpEntity<Object> entity = new HttpEntity<>(transaction);
+    ResponseEntity<ObjectNode> result =
+            testRestTemplate.exchange(
+                    "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+    ObjectNode body = result.getBody();
 
-    assertEquals("OK", result.get("status").asText());
-    assertEquals(0, result.withArray("errors").size());
-    assertEquals(0.2, result.get("tax_collected").asDouble());
-    assertEquals(0.0, result.get("CAD").asDouble());
+    assertEquals(200, result.getStatusCode().value());
+    assertEquals("OK", body.get("status").asText());
+    assertEquals(0, body.withArray("errors").size());
+    assertEquals(0.2, body.get("tax_collected").asDouble());
+    assertEquals(0.0, body.get("CAD").asDouble());
+  }
+
+  @Test
+  void WithRightValidParamsAndValidAmountGreatherThan100ShouldReceiveOkResponseWith0_5Tax() throws Exception {
+    ObjectNode transaction =
+            getTransaction(
+                    101.0, "USD", 3, 4, "Hey dude! I am sending you the money you loaned to me lastweek.");
+
+    HttpEntity<Object> entity = new HttpEntity<>(transaction);
+    ResponseEntity<ObjectNode> result =
+            testRestTemplate.exchange(
+                    "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+    ObjectNode body = result.getBody();
+
+    assertEquals(200, result.getStatusCode().value());
+    assertEquals("OK", body.get("status").asText());
+    assertEquals(0, body.withArray("errors").size());
+    assertEquals(0.5, body.get("tax_collected").asDouble());
+    assertEquals(0.0, body.get("CAD").asDouble());
+  }
+
+  @Test
+  void WithRightValidParamsButPrevious3SuccessTransactionsShouldReceiveKoResponseLimitsExceed() throws Exception {
+    ObjectNode transaction =
+            getTransaction(1.0, "USD", 5, 6, "Hey dude! I am sending you the money you loaned to me lastweek.");
+
+    HttpEntity<Object> entity = new HttpEntity<>(transaction);
+    ResponseEntity<ObjectNode> tx1 =
+            testRestTemplate.exchange(
+                    "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+    assertEquals(200, tx1.getStatusCode().value());
+
+    ResponseEntity<ObjectNode> tx2 =
+            testRestTemplate.exchange(
+                    "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+    assertEquals(200, tx2.getStatusCode().value());
+
+    ResponseEntity<ObjectNode> tx3 =
+            testRestTemplate.exchange(
+                    "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+    assertEquals(200, tx3.getStatusCode().value());
+
+    ResponseEntity<ObjectNode> tx4 =
+            testRestTemplate.exchange(
+                    "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+
+    ObjectNode body = tx4.getBody();
+
+    assertEquals(412, tx4.getStatusCode().value());
+    assertEquals("KO", body.get("status").asText());
+    assertEquals(1, body.withArray("errors").size());
+    assertEquals("limit_exceeded", body.withArray("errors").get(0).asText());
+    assertEquals(0.0, body.get("tax_collected").asDouble());
+    assertEquals(0.0, body.get("CAD").asDouble());
+  }
+
+  @Test
+  void WithWrongOriginDestinationAndValidAmountShouldReceiveKoResponse() throws Exception {
+    ObjectNode transaction =
+        getTransaction(
+            100.0,
+            "USD",
+            100,
+            1001,
+            "Hey dude! I am sending you the money you loaned to me lastweek.");
+
+    HttpEntity<Object> entity = new HttpEntity<>(transaction);
+    ResponseEntity<ObjectNode> result =
+            testRestTemplate.exchange(
+                    "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+    ObjectNode body = result.getBody();
+
+    assertEquals(400, result.getStatusCode().value());
+    assertEquals("KO", body.get("status").asText());
+    assertEquals(1, body.withArray("errors").size());
+  }
+
+  @Test
+  void WithWrongCurrencyAndTheRestValidShouldReceiveKoResponse() throws Exception {
+    ObjectNode transaction =
+        getTransaction(
+            100.0, "COP", 5, 6, "Hey dude! I am sending you the money you loaned to me lastweek.");
+
+    HttpEntity<Object> entity = new HttpEntity<>(transaction);
+    ResponseEntity<ObjectNode> result =
+        testRestTemplate.exchange(
+            "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+    ObjectNode body = result.getBody();
+
+    assertEquals(400, result.getStatusCode().value());
+    assertEquals("KO", body.get("status").asText());
+    assertEquals(1, body.withArray("errors").size());
+  }
+
+  @Test
+  void WithAmountGreaterThanAccountAmountShouldReceiveKoResponse() throws Exception {
+    ObjectNode transaction =
+            getTransaction(
+                    10000.0, "USD", 5, 6, "Hey dude! I am sending you the money you loaned to me lastweek.");
+
+    HttpEntity<Object> entity = new HttpEntity<>(transaction);
+    ResponseEntity<ObjectNode> result =
+            testRestTemplate.exchange(
+                    "http://localhost:8080/v1/transactions", HttpMethod.POST, entity, ObjectNode.class);
+    ObjectNode body = result.getBody();
+
+    assertEquals(412, result.getStatusCode().value());
+    assertEquals("KO", body.get("status").asText());
+    assertEquals(1, body.withArray("errors").size());
+    assertEquals("insufficient-funds", body.withArray("errors").get(0).asText());
   }
 
   ObjectNode getTransaction(
