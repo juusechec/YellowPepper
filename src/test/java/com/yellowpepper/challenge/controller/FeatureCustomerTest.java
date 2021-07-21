@@ -29,8 +29,7 @@ class FeatureCustomerTest {
           + "When the user query de API "
           + "Then receives the user information ")
   void test1() throws Exception {
-    ObjectNode result =
-        testRestTemplate.getForObject(CUSTOMER_ENDPOINT + "/1", ObjectNode.class);
+    ObjectNode result = testRestTemplate.getForObject(CUSTOMER_ENDPOINT + "/1", ObjectNode.class);
 
     assertEquals(1, result.get("id").asInt());
     assertTrue(result.get("first_name").isTextual());
@@ -45,8 +44,7 @@ class FeatureCustomerTest {
           + "When the user query de API "
           + "Then receives a KO with 404 not found ")
   void test2() throws Exception {
-    ObjectNode result =
-        testRestTemplate.getForObject(CUSTOMER_ENDPOINT + "/100", ObjectNode.class);
+    ObjectNode result = testRestTemplate.getForObject(CUSTOMER_ENDPOINT + "/100", ObjectNode.class);
 
     assertEquals("KO", result.get("status").asText());
     assertTrue(result.get("errors").isArray());

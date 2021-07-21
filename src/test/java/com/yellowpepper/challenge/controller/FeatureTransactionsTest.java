@@ -49,8 +49,7 @@ class FeatureTransactionsTest {
 
     HttpEntity<Object> entity = new HttpEntity<>(transaction);
     ResponseEntity<ObjectNode> result =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     ObjectNode body = result.getBody();
 
     assertEquals(200, result.getStatusCode().value());
@@ -72,8 +71,7 @@ class FeatureTransactionsTest {
 
     HttpEntity<Object> entity = new HttpEntity<>(transaction);
     ResponseEntity<ObjectNode> result =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     ObjectNode body = result.getBody();
 
     assertEquals(200, result.getStatusCode().value());
@@ -95,23 +93,19 @@ class FeatureTransactionsTest {
 
     HttpEntity<Object> entity = new HttpEntity<>(transaction);
     ResponseEntity<ObjectNode> tx1 =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     assertEquals(200, tx1.getStatusCode().value());
 
     ResponseEntity<ObjectNode> tx2 =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     assertEquals(200, tx2.getStatusCode().value());
 
     ResponseEntity<ObjectNode> tx3 =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     assertEquals(200, tx3.getStatusCode().value());
 
     ResponseEntity<ObjectNode> tx4 =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
 
     ObjectNode body = tx4.getBody();
 
@@ -139,8 +133,7 @@ class FeatureTransactionsTest {
 
     HttpEntity<Object> entity = new HttpEntity<>(transaction);
     ResponseEntity<ObjectNode> result =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     ObjectNode body = result.getBody();
 
     assertEquals(400, result.getStatusCode().value());
@@ -160,8 +153,7 @@ class FeatureTransactionsTest {
 
     HttpEntity<Object> entity = new HttpEntity<>(transaction);
     ResponseEntity<ObjectNode> result =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     ObjectNode body = result.getBody();
 
     assertEquals(400, result.getStatusCode().value());
@@ -185,8 +177,7 @@ class FeatureTransactionsTest {
 
     HttpEntity<Object> entity = new HttpEntity<>(transaction);
     ResponseEntity<ObjectNode> result =
-        testRestTemplate.exchange(
-            TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+        testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     ObjectNode body = result.getBody();
 
     assertEquals(412, result.getStatusCode().value());

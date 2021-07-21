@@ -118,122 +118,108 @@ public class TransferService {
             throw new AccountTransfersLimitExceedException("limit_exceeded");
           });
     } else {
-        return applyDiscount(transfer, origin, destiny, tax, amountToTransfer);
+      return applyDiscount(transfer, origin, destiny, tax, amountToTransfer);
     }
   }
 
-  public Mono<ResponseCreateTransactionDto> applyDiscount(Transfer transfer, Account origin, Account destiny, Double tax, BigDecimal amountToTransfer) {
-      Mono<Transfer> transferMono = transferRepository.save(transfer);
+  public Mono<ResponseCreateTransactionDto> applyDiscount(
+      Transfer transfer, Account origin, Account destiny, Double tax, BigDecimal amountToTransfer) {
+    Mono<Transfer> transferMono = transferRepository.save(transfer);
 
-      return transferMono
-              .flatMap(done -> convertCurrenciesToUSD(origin, destiny))
-              .map(
-                      oldAmountsInUSD -> {
-                          Double originInUSD = oldAmountsInUSD.getNewAmountOfOrigin();
-                          Double destinyInUSD = oldAmountsInUSD.getNewAmountOfDestiny();
-                          return getNewAmounts(
-                                  tax, amountToTransfer.doubleValue(), originInUSD, destinyInUSD);
-                      })
-              .flatMap(newAmountsInUSD -> convertCurrenciesToCAD(transfer, origin, destiny, newAmountsInUSD, tax))
-              .flatMap(done -> exchangeService.fromCADtoUSD(1))
-              .map(cadInUsd -> createResponse(BigDecimal.valueOf(tax), BigDecimal.valueOf(cadInUsd)));
+    return transferMono
+        .flatMap(done -> convertCurrenciesToUSD(origin, destiny))
+        .map(
+            oldAmountsInUSD -> {
+              Double originInUSD = oldAmountsInUSD.getNewAmountOfOrigin();
+              Double destinyInUSD = oldAmountsInUSD.getNewAmountOfDestiny();
+              return getNewAmounts(tax, amountToTransfer.doubleValue(), originInUSD, destinyInUSD);
+            })
+        .flatMap(
+            newAmountsInUSD ->
+                convertCurrenciesToCAD(transfer, origin, destiny, newAmountsInUSD, tax))
+        .flatMap(done -> exchangeService.fromCADtoUSD(1))
+        .map(cadInUsd -> createResponse(BigDecimal.valueOf(tax), BigDecimal.valueOf(cadInUsd)));
   }
 
   public Mono<NewAmounts> convertCurrenciesToUSD(Account origin, Account destiny) {
-      if (origin.getIdCurrency() == 1 && destiny.getIdCurrency() == 2) {
-          LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: USD, DESTINATION: CAD");
-          Mono<Double> destinyInUSDMono =
-                  exchangeService.fromCADtoUSD(destiny.getAmount().doubleValue());
-          return destinyInUSDMono.map(
-                  destinyInUSD -> {
-                      Double originInUSD = origin.getAmount().doubleValue();
-                      return new NewAmounts(originInUSD, destinyInUSD);
-                  });
-      } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 2) {
-          LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: CAD, DESTINATION: CAD");
-          Mono<Double> originInUSDMono =
-                  exchangeService.fromCADtoUSD(destiny.getAmount().doubleValue());
-          Mono<Double> destinyInUSDMono =
-                  exchangeService.fromCADtoUSD(destiny.getAmount().doubleValue());
-          return Mono.zip(originInUSDMono, destinyInUSDMono)
-                  .map(
-                          data -> {
-                              Double originInUSD = data.getT1();
-                              Double destinyInUSD = data.getT2();
-                              return new NewAmounts(originInUSD, destinyInUSD);
-                          });
-      } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 1) {
-          LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: CAD, DESTINATION: USD");
-          Mono<Double> originInUSDMono =
-                  exchangeService.fromCADtoUSD(origin.getAmount().doubleValue());
-          return originInUSDMono.map(
-                  originInUSD -> {
-                      Double destinyInUSD = destiny.getAmount().doubleValue();
-                      return new NewAmounts(originInUSD, destinyInUSD);
-                  });
-      } else {
-          LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: USD, DESTINATION: USD");
-          Double originInUSD = origin.getAmount().doubleValue();
-          Double destinyInUSD = destiny.getAmount().doubleValue();
-          return Mono.just(new NewAmounts(originInUSD, destinyInUSD));
-      }
+    if (origin.getIdCurrency() == 1 && destiny.getIdCurrency() == 2) {
+      LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: USD, DESTINATION: CAD");
+      Mono<Double> destinyInUSDMono =
+          exchangeService.fromCADtoUSD(destiny.getAmount().doubleValue());
+      return destinyInUSDMono.map(
+          destinyInUSD -> {
+            Double originInUSD = origin.getAmount().doubleValue();
+            return new NewAmounts(originInUSD, destinyInUSD);
+          });
+    } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 2) {
+      LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: CAD, DESTINATION: CAD");
+      Mono<Double> originInUSDMono =
+          exchangeService.fromCADtoUSD(destiny.getAmount().doubleValue());
+      Mono<Double> destinyInUSDMono =
+          exchangeService.fromCADtoUSD(destiny.getAmount().doubleValue());
+      return Mono.zip(originInUSDMono, destinyInUSDMono)
+          .map(
+              data -> {
+                Double originInUSD = data.getT1();
+                Double destinyInUSD = data.getT2();
+                return new NewAmounts(originInUSD, destinyInUSD);
+              });
+    } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 1) {
+      LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: CAD, DESTINATION: USD");
+      Mono<Double> originInUSDMono = exchangeService.fromCADtoUSD(origin.getAmount().doubleValue());
+      return originInUSDMono.map(
+          originInUSD -> {
+            Double destinyInUSD = destiny.getAmount().doubleValue();
+            return new NewAmounts(originInUSD, destinyInUSD);
+          });
+    } else {
+      LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: USD, DESTINATION: USD");
+      Double originInUSD = origin.getAmount().doubleValue();
+      Double destinyInUSD = destiny.getAmount().doubleValue();
+      return Mono.just(new NewAmounts(originInUSD, destinyInUSD));
+    }
   }
 
-  public Mono<Boolean> convertCurrenciesToCAD(Transfer transfer, Account origin, Account destiny, NewAmounts newAmountsInUSD, Double tax) {
-      Double newAmountOfOriginInUSD = newAmountsInUSD.getNewAmountOfOrigin();
-      Double newAmountOfDestinyInUSD = newAmountsInUSD.getNewAmountOfDestiny();
-      if (origin.getIdCurrency() == 1 && destiny.getIdCurrency() == 2) {
-          LOGGER.info(
-                  "TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: USD, DESTINATION: CAD");
-          Double newAmountOfOrigin = newAmountOfOriginInUSD;
-          Mono<Double> destinyInCADMono =
-                  exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
-          return destinyInCADMono.flatMap(
-                  destinyInCAD -> {
-                      Double newAmountOfDestiny = destinyInCAD;
-                      return saveToDB(
-                              origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
-                  });
-      } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 2) {
-          LOGGER.info(
-                  "TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: CAD, DESTINATION: CAD");
-          Mono<Double> originInCADMono =
-                  exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
-          Mono<Double> destinyInCADMono =
-                  exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
-          return Mono.zip(originInCADMono, destinyInCADMono)
-                  .flatMap(
-                          data -> {
-                              Double newAmountOfOrigin = data.getT1();
-                              Double newAmountOfDestiny = data.getT2();
-                              return saveToDB(
-                                      origin,
-                                      destiny,
-                                      transfer,
-                                      newAmountOfOrigin,
-                                      newAmountOfDestiny,
-                                      tax);
-                          });
-      } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 1) {
-          LOGGER.info(
-                  "TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: CAD, DESTINATION: USD");
-          Double newAmountOfDestiny = newAmountOfDestinyInUSD;
-          Mono<Double> originInCADMono =
-                  exchangeService.fromUSDtoCAD(newAmountOfOriginInUSD);
-          return originInCADMono.flatMap(
-                  originInCAD -> {
-                      Double newAmountOfOrigin = originInCAD;
-                      return saveToDB(
-                              origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
-                  });
-      } else {
-          LOGGER.info(
-                  "TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: USD, DESTINATION: USD");
-          Double newAmountOfOrigin = newAmountOfOriginInUSD;
-          Double newAmountOfDestiny = newAmountOfDestinyInUSD;
-          return saveToDB(
-                  origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
-      }
+  public Mono<Boolean> convertCurrenciesToCAD(
+      Transfer transfer, Account origin, Account destiny, NewAmounts newAmountsInUSD, Double tax) {
+    Double newAmountOfOriginInUSD = newAmountsInUSD.getNewAmountOfOrigin();
+    Double newAmountOfDestinyInUSD = newAmountsInUSD.getNewAmountOfDestiny();
+    if (origin.getIdCurrency() == 1 && destiny.getIdCurrency() == 2) {
+      LOGGER.info("TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: USD, DESTINATION: CAD");
+      Double newAmountOfOrigin = newAmountOfOriginInUSD;
+      Mono<Double> destinyInCADMono = exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
+      return destinyInCADMono.flatMap(
+          destinyInCAD -> {
+            Double newAmountOfDestiny = destinyInCAD;
+            return saveToDB(origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
+          });
+    } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 2) {
+      LOGGER.info("TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: CAD, DESTINATION: CAD");
+      Mono<Double> originInCADMono = exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
+      Mono<Double> destinyInCADMono = exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
+      return Mono.zip(originInCADMono, destinyInCADMono)
+          .flatMap(
+              data -> {
+                Double newAmountOfOrigin = data.getT1();
+                Double newAmountOfDestiny = data.getT2();
+                return saveToDB(
+                    origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
+              });
+    } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 1) {
+      LOGGER.info("TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: CAD, DESTINATION: USD");
+      Double newAmountOfDestiny = newAmountOfDestinyInUSD;
+      Mono<Double> originInCADMono = exchangeService.fromUSDtoCAD(newAmountOfOriginInUSD);
+      return originInCADMono.flatMap(
+          originInCAD -> {
+            Double newAmountOfOrigin = originInCAD;
+            return saveToDB(origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
+          });
+    } else {
+      LOGGER.info("TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: USD, DESTINATION: USD");
+      Double newAmountOfOrigin = newAmountOfOriginInUSD;
+      Double newAmountOfDestiny = newAmountOfDestinyInUSD;
+      return saveToDB(origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
+    }
   }
 
   public Mono<Boolean> saveToDB(

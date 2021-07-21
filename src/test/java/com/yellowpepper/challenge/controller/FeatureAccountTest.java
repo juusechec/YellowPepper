@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -35,8 +36,7 @@ class FeatureAccountTest {
     ObjectNode account = getAccount(1);
 
     ObjectNode result =
-        testRestTemplate.postForObject(
-            RETRIEVE_ENDPOINT, account, ObjectNode.class);
+        testRestTemplate.postForObject(RETRIEVE_ENDPOINT, account, ObjectNode.class);
 
     assertEquals("OK", result.get("status").asText());
     assertTrue(result.get("errors").isArray());
@@ -53,8 +53,7 @@ class FeatureAccountTest {
     ObjectNode account = getAccount(100);
 
     ObjectNode result =
-        testRestTemplate.postForObject(
-            RETRIEVE_ENDPOINT, account, ObjectNode.class);
+        testRestTemplate.postForObject(RETRIEVE_ENDPOINT, account, ObjectNode.class);
 
     assertEquals("KO", result.get("status").asText());
     assertTrue(result.get("errors").isArray());
@@ -66,12 +65,13 @@ class FeatureAccountTest {
 
   @Test
   @DisplayName(
-          "Given a valid customer with 2 accounts "
-                  + "When the user query de API "
-                  + "Then receives the 2 accounts information ")
+      "Given a valid customer with 2 accounts "
+          + "When the user query de API "
+          + "Then receives the 2 accounts information ")
   void test3() throws Exception {
     ResponseEntity<ObjectNode[]> result =
-            testRestTemplate.exchange(CUSTOMER_ENDPOINT + "/1/accounts", HttpMethod.GET, null, ObjectNode[].class);
+        testRestTemplate.exchange(
+            CUSTOMER_ENDPOINT + "/1/accounts", HttpMethod.GET, null, ObjectNode[].class);
     ObjectNode[] body = result.getBody();
 
     assertEquals(200, result.getStatusCode().value());
@@ -80,12 +80,13 @@ class FeatureAccountTest {
 
   @Test
   @DisplayName(
-          "Given a valid customer with 2 accounts "
-                  + "When the user query de API with account id "
-                  + "Then receives the account information ")
+      "Given a valid customer with 2 accounts "
+          + "When the user query de API with account id "
+          + "Then receives the account information ")
   void test4() throws Exception {
     ResponseEntity<ObjectNode> result =
-            testRestTemplate.exchange(CUSTOMER_ENDPOINT + "/1/accounts/1", HttpMethod.GET, null, ObjectNode.class);
+        testRestTemplate.exchange(
+            CUSTOMER_ENDPOINT + "/1/accounts/1", HttpMethod.GET, null, ObjectNode.class);
     ObjectNode body = result.getBody();
 
     assertEquals(200, result.getStatusCode().value());
