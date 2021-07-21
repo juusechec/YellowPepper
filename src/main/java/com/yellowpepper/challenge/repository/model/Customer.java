@@ -1,5 +1,6 @@
 package com.yellowpepper.challenge.repository.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 
@@ -7,14 +8,17 @@ public class Customer {
   @Id private Integer id;
 
   @Column("first_name")
+  @JsonProperty(value = "first_name")
   private String firstName;
 
   @Column("second_name")
+  @JsonProperty(value = "second_name")
   private String secondName;
 
   private String surname;
 
   @Column("second_surname")
+  @JsonProperty(value = "second_surname")
   private String secondSurname;
 
   public Customer() {

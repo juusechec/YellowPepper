@@ -1,5 +1,6 @@
 package com.yellowpepper.challenge.repository.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 
@@ -10,9 +11,11 @@ public class Transfer {
   @Id private Integer id;
 
   @Column("id_origin_account")
+  @JsonProperty(value = "id_origin_account")
   private Integer idOriginAccount;
 
   @Column("id_destination_account")
+  @JsonProperty(value = "id_destination_account")
   private Integer idDestinationAccount;
 
   private BigDecimal amount;
@@ -20,6 +23,7 @@ public class Transfer {
   private BigDecimal tax;
 
   @Column("id_currency")
+  @JsonProperty(value = "id_currency")
   private Integer idCurrency;
 
   private LocalDateTime datetime;
@@ -92,5 +96,28 @@ public class Transfer {
 
   public void setTax(BigDecimal tax) {
     this.tax = tax;
+  }
+
+  @Override
+  public String toString() {
+    return "Transfer{"
+        + "id="
+        + id
+        + ", idOriginAccount="
+        + idOriginAccount
+        + ", idDestinationAccount="
+        + idDestinationAccount
+        + ", amount="
+        + amount
+        + ", tax="
+        + tax
+        + ", idCurrency="
+        + idCurrency
+        + ", datetime="
+        + datetime
+        + ", status='"
+        + status
+        + '\''
+        + '}';
   }
 }

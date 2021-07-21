@@ -21,7 +21,8 @@ public class DatabaseConfiguration {
     initializer.setConnectionFactory(connectionFactory);
     if (this.initializationMode.equals("always")) {
       ResourceDatabasePopulator resourceDatabasePopulator =
-          new ResourceDatabasePopulator(new ClassPathResource("1-ddl.sql"));
+          new ResourceDatabasePopulator(new ClassPathResource("0-clean.sql"));
+      resourceDatabasePopulator.addScript(new ClassPathResource("1-ddl.sql"));
       resourceDatabasePopulator.addScript(new ClassPathResource("2-dml.sql"));
       initializer.setDatabasePopulator(resourceDatabasePopulator);
     }

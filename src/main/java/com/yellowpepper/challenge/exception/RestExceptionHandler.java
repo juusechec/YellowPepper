@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.logging.Level;
@@ -31,7 +32,7 @@ public class RestExceptionHandler {
   public ResponseEntity<Object> handleInternalServer(HttpServletRequest req, Exception ex) {
     ObjectNode errors = mapper.createObjectNode();
     errors.put(STATUS, STATUS_KO);
-    errors.putPOJO(DESCRIPTION, ex.getCause());
+    errors.putPOJO(DESCRIPTION, ex.getMessage());
     LOGGER.log(Level.SEVERE, "an exception was thrown", ex);
     return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
   }
@@ -59,8 +60,7 @@ public class RestExceptionHandler {
 
   @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
   @ExceptionHandler({InsufficientFundsException.class, AccountTransfersLimitExceedException.class})
-  public ResponseEntity<Object> insufficientFunds(
-      HttpServletRequest req, RuntimeException ex) {
+  public ResponseEntity<Object> insufficientFunds(HttpServletRequest req, RuntimeException ex) {
     ResponseCreateTransactionDto responseCreateTransactionDto = new ResponseCreateTransactionDto();
     responseCreateTransactionDto.setStatus(STATUS_KO);
     responseCreateTransactionDto.addError(ex.getMessage());
@@ -76,5 +76,13 @@ public class RestExceptionHandler {
     responseBaseDto.setStatus(STATUS_KO);
     responseBaseDto.addError(ex.getMessage());
     return new ResponseEntity<>(responseBaseDto, new HttpHeaders(), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(ResponseStatusException.class)
+  public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException e) {
+    ObjectNode errors = mapper.createObjectNode();
+    errors.put(STATUS, STATUS_KO);
+    errors.put(DESCRIPTION, e.getMessage());
+    return ResponseEntity.status(e.getStatus()).body(errors);
   }
 }
