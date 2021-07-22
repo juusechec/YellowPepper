@@ -154,7 +154,7 @@ public class TransferService {
     } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 2) {
       LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: CAD, DESTINATION: CAD");
       Mono<Double> originInUSDMono =
-          exchangeService.fromCADtoUSD(destiny.getAmount().doubleValue());
+          exchangeService.fromCADtoUSD(origin.getAmount().doubleValue());
       Mono<Double> destinyInUSDMono =
           exchangeService.fromCADtoUSD(destiny.getAmount().doubleValue());
       return Mono.zip(originInUSDMono, destinyInUSDMono)
@@ -195,7 +195,7 @@ public class TransferService {
           });
     } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 2) {
       LOGGER.info("TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: CAD, DESTINATION: CAD");
-      Mono<Double> originInCADMono = exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
+      Mono<Double> originInCADMono = exchangeService.fromUSDtoCAD(newAmountOfOriginInUSD);
       Mono<Double> destinyInCADMono = exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
       return Mono.zip(originInCADMono, destinyInCADMono)
           .flatMap(

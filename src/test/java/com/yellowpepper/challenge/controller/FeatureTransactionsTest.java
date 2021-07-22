@@ -30,7 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     initializers = PropertyOverrideContextInitializer.class,
     classes = FundsTransferApplication.class)
 class FeatureTransactionsTest {
-  private final String TRANSACTIONS_ENDPOINT = "http://localhost:8080/v1/transactions";
+  private final String SERVER_ENDPOINT = "http://localhost:8080";
+  private final String TRANSACTIONS_ENDPOINT = SERVER_ENDPOINT + "/v1/transactions";
+  private final String RETRIEVE_ENDPOINT = SERVER_ENDPOINT + "/v1/customers/1/retrieve-account";
   private final ObjectMapper mapper = new ObjectMapper();
   private TestRestTemplate testRestTemplate = new TestRestTemplate();
 
@@ -92,6 +94,7 @@ class FeatureTransactionsTest {
             1.0, "USD", 5, 6, "Hey dude! I am sending you the money you loaned to me lastweek.");
 
     HttpEntity<Object> entity = new HttpEntity<>(transaction);
+
     ResponseEntity<ObjectNode> tx1 =
         testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
     assertEquals(200, tx1.getStatusCode().value());
@@ -115,6 +118,20 @@ class FeatureTransactionsTest {
     assertEquals("limit_exceeded", body.withArray("errors").get(0).asText());
     assertEquals(0.0, body.get("tax_collected").asDouble());
     assertEquals(0.0, body.get("CAD").asDouble());
+
+    ObjectNode account5 =
+            testRestTemplate.postForObject(RETRIEVE_ENDPOINT, getAccount(5), ObjectNode.class);
+    assertEquals("OK", account5.get("status").asText());
+    assertTrue(account5.get("errors").isArray());
+    assertEquals(0, account5.withArray("errors").size());
+    assertEquals(1487.7425489560003, account5.get("account_balance").asDouble());
+
+    ObjectNode account6 =
+            testRestTemplate.postForObject(RETRIEVE_ENDPOINT, getAccount(6), ObjectNode.class);
+    assertEquals("OK", account6.get("status").asText());
+    assertTrue(account6.get("errors").isArray());
+    assertEquals(0, account6.withArray("errors").size());
+    assertEquals(16.28, account6.get("account_balance").asDouble());
   }
 
   @Test
@@ -198,6 +215,12 @@ class FeatureTransactionsTest {
     newObjectInstance.put("origin_account", originAccount.toString());
     newObjectInstance.put("destination_account", destinationAccount.toString());
     newObjectInstance.put("description", description);
+    return newObjectInstance;
+  }
+
+  ObjectNode getAccount(int accountId) {
+    ObjectNode newObjectInstance = mapper.createObjectNode();
+    newObjectInstance.put("account", String.valueOf(accountId));
     return newObjectInstance;
   }
 }
