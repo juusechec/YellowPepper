@@ -137,7 +137,7 @@ public class TransferService {
         .flatMap(
             newAmountsInUSD ->
                 convertCurrenciesToCAD(transfer, origin, destiny, newAmountsInUSD, tax))
-        .flatMap(done -> exchangeService.fromCADtoUSD(1))
+        .flatMap(done -> exchangeService.fromUSDtoCAD(1))
         .map(cadInUsd -> createResponse(BigDecimal.valueOf(tax), BigDecimal.valueOf(cadInUsd)));
   }
 
@@ -270,7 +270,7 @@ public class TransferService {
   public NewAmounts getNewAmounts(
       Double tax, Double amountToTransfer, Double originAmount, Double destinyAmount) {
     double taxValue = originAmount * tax / 100;
-    double newAmountOfOrigin = originAmount - taxValue;
+    double newAmountOfOrigin = originAmount - amountToTransfer - taxValue;
     double newAmountOfDestiny = destinyAmount + amountToTransfer;
     return new NewAmounts(newAmountOfOrigin, newAmountOfDestiny);
   }
