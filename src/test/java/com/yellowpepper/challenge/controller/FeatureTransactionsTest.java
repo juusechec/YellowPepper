@@ -120,14 +120,14 @@ class FeatureTransactionsTest {
     assertEquals(0.0, body.get("CAD").asDouble());
 
     ObjectNode account5 =
-            testRestTemplate.postForObject(RETRIEVE_ENDPOINT, getAccount(5), ObjectNode.class);
+        testRestTemplate.postForObject(RETRIEVE_ENDPOINT, getAccount(5), ObjectNode.class);
     assertEquals("OK", account5.get("status").asText());
     assertTrue(account5.get("errors").isArray());
     assertEquals(0, account5.withArray("errors").size());
     assertEquals(1487.7425489560003, account5.get("account_balance").asDouble());
 
     ObjectNode account6 =
-            testRestTemplate.postForObject(RETRIEVE_ENDPOINT, getAccount(6), ObjectNode.class);
+        testRestTemplate.postForObject(RETRIEVE_ENDPOINT, getAccount(6), ObjectNode.class);
     assertEquals("OK", account6.get("status").asText());
     assertTrue(account6.get("errors").isArray());
     assertEquals(0, account6.withArray("errors").size());

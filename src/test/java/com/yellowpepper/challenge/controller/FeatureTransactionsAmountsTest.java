@@ -20,7 +20,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @DirtiesContext
@@ -41,7 +40,6 @@ class FeatureTransactionsAmountsTest {
     WireMockInitializer.initialize();
   }
 
-
   @Test
   @DisplayName(
       "Given valid accounts the origin in USD and the destination in USD "
@@ -53,33 +51,38 @@ class FeatureTransactionsAmountsTest {
 
   @Test
   @DisplayName(
-          "Given valid accounts the origin in CAD and the destination in USD "
-                  + "When the user do a 1 USD transaction "
-                  + "Then the accounts have the right amounts ")
+      "Given valid accounts the origin in CAD and the destination in USD "
+          + "When the user do a 1 USD transaction "
+          + "Then the accounts have the right amounts ")
   void test2() throws Exception {
     validateAmount(11, 12, 0.0, 1.0);
   }
 
   @Test
   @DisplayName(
-          "Given valid accounts the origin in USD and the destination in CAD "
-                  + "When the user do a 1 USD transaction "
-                  + "Then the accounts have the right amounts ")
+      "Given valid accounts the origin in USD and the destination in CAD "
+          + "When the user do a 1 USD transaction "
+          + "Then the accounts have the right amounts ")
   void test3() throws Exception {
     validateAmount(13, 14, 0.0, 1.26);
   }
 
   @Test
   @DisplayName(
-          "Given valid accounts the origin in CAD and the destination in CAD "
-                  + "When the user do a 1 USD transaction "
-                  + "Then the accounts have the right amounts ")
+      "Given valid accounts the origin in CAD and the destination in CAD "
+          + "When the user do a 1 USD transaction "
+          + "Then the accounts have the right amounts ")
   void test4() throws Exception {
     validateAmount(15, 16, 0.0, 1.26);
   }
 
-  void validateAmount(Integer originAccountId, Integer originDestinationId, Double expectedOriginAmount, Double expectedDestinationAmount) {
-    ObjectNode transaction = getTransaction(1.0, "USD", originAccountId, originDestinationId, "USD to USD");
+  void validateAmount(
+      Integer originAccountId,
+      Integer originDestinationId,
+      Double expectedOriginAmount,
+      Double expectedDestinationAmount) {
+    ObjectNode transaction =
+        getTransaction(1.0, "USD", originAccountId, originDestinationId, "USD to USD");
 
     ResponseEntity<ObjectNode> tx = executeTransaction(transaction);
     assertEquals(200, tx.getStatusCode().value());
@@ -94,12 +97,14 @@ class FeatureTransactionsAmountsTest {
   }
 
   ObjectNode executeGetAccount(Integer accountId) {
-    return testRestTemplate.postForObject(RETRIEVE_ENDPOINT, getAccount(accountId), ObjectNode.class);
+    return testRestTemplate.postForObject(
+        RETRIEVE_ENDPOINT, getAccount(accountId), ObjectNode.class);
   }
 
   ResponseEntity<ObjectNode> executeTransaction(ObjectNode transaction) {
     HttpEntity<Object> entity = new HttpEntity<>(transaction);
-    return testRestTemplate.exchange(TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
+    return testRestTemplate.exchange(
+        TRANSACTIONS_ENDPOINT, HttpMethod.POST, entity, ObjectNode.class);
   }
 
   ObjectNode getTransaction(

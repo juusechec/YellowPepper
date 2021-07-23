@@ -63,6 +63,9 @@ public class AccountTransferValidationRequest {
   }
 
   public boolean getValid() {
-    return accountAmount.compareTo(amountToTransfer.multiply((tax.divide(BigDecimal.valueOf(100.0)).add(BigDecimal.valueOf(1.0))))) < 0;
+    return accountAmount.compareTo(
+            amountToTransfer.multiply(
+                (tax.divide(BigDecimal.valueOf(100.0)).add(BigDecimal.valueOf(1.0)))))
+        < 0;
   }
 }

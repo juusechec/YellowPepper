@@ -25,17 +25,12 @@ import java.util.logging.Logger;
 
 @Service
 public class TransferService {
-  @Autowired AccountRepository accountRepository;
-
-  @Autowired CurrencyRepository currencyRepository;
-
-  @Autowired TransferRepository transferRepository;
-
-  @Autowired DroolsService droolsService;
-
-  @Autowired ExchangeService exchangeService;
-
   private static final Logger LOGGER = Logger.getLogger(TransferService.class.getName());
+  @Autowired AccountRepository accountRepository;
+  @Autowired CurrencyRepository currencyRepository;
+  @Autowired TransferRepository transferRepository;
+  @Autowired DroolsService droolsService;
+  @Autowired ExchangeService exchangeService;
 
   public Mono<ResponseCreateTransactionDto> createTransfer(
       RequestCreateTransactionDto requestCreateTransactionDto) {
@@ -123,15 +118,19 @@ public class TransferService {
   }
 
   public Mono<ResponseCreateTransactionDto> applyDiscount(
-      Transfer transfer, Account origin, Account destiny, BigDecimal tax, BigDecimal amountToTransfer) {
+      Transfer transfer,
+      Account origin,
+      Account destiny,
+      BigDecimal tax,
+      BigDecimal amountToTransfer) {
     Mono<Transfer> transferMono = transferRepository.save(transfer);
 
     return transferMono
         .flatMap(done -> convertCurrenciesToUSD(origin, destiny))
         .map(
             oldAmountsInUSD -> {
-                BigDecimal originInUSD = oldAmountsInUSD.getNewAmountOfOrigin();
-                BigDecimal destinyInUSD = oldAmountsInUSD.getNewAmountOfDestiny();
+              BigDecimal originInUSD = oldAmountsInUSD.getNewAmountOfOrigin();
+              BigDecimal destinyInUSD = oldAmountsInUSD.getNewAmountOfDestiny();
               return getNewAmounts(tax, amountToTransfer, originInUSD, destinyInUSD);
             })
         .flatMap(
@@ -144,8 +143,7 @@ public class TransferService {
   public Mono<NewAmounts> convertCurrenciesToUSD(Account origin, Account destiny) {
     if (origin.getIdCurrency() == 1 && destiny.getIdCurrency() == 2) {
       LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: USD, DESTINATION: CAD");
-      Mono<BigDecimal> destinyInUSDMono =
-          exchangeService.fromCADtoUSD(destiny.getAmount());
+      Mono<BigDecimal> destinyInUSDMono = exchangeService.fromCADtoUSD(destiny.getAmount());
       return destinyInUSDMono.map(
           destinyInUSD -> {
             BigDecimal originInUSD = origin.getAmount();
@@ -153,10 +151,8 @@ public class TransferService {
           });
     } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 2) {
       LOGGER.info("TRANSFORM TO USD -> CASE ORIGIN: CAD, DESTINATION: CAD");
-      Mono<BigDecimal> originInUSDMono =
-          exchangeService.fromCADtoUSD(origin.getAmount());
-      Mono<BigDecimal> destinyInUSDMono =
-          exchangeService.fromCADtoUSD(destiny.getAmount());
+      Mono<BigDecimal> originInUSDMono = exchangeService.fromCADtoUSD(origin.getAmount());
+      Mono<BigDecimal> destinyInUSDMono = exchangeService.fromCADtoUSD(destiny.getAmount());
       return Mono.zip(originInUSDMono, destinyInUSDMono)
           .map(
               data -> {
@@ -181,16 +177,20 @@ public class TransferService {
   }
 
   public Mono<Boolean> convertCurrenciesToCAD(
-      Transfer transfer, Account origin, Account destiny, NewAmounts newAmountsInUSD, BigDecimal tax) {
-      BigDecimal newAmountOfOriginInUSD = newAmountsInUSD.getNewAmountOfOrigin();
-      BigDecimal newAmountOfDestinyInUSD = newAmountsInUSD.getNewAmountOfDestiny();
+      Transfer transfer,
+      Account origin,
+      Account destiny,
+      NewAmounts newAmountsInUSD,
+      BigDecimal tax) {
+    BigDecimal newAmountOfOriginInUSD = newAmountsInUSD.getNewAmountOfOrigin();
+    BigDecimal newAmountOfDestinyInUSD = newAmountsInUSD.getNewAmountOfDestiny();
     if (origin.getIdCurrency() == 1 && destiny.getIdCurrency() == 2) {
       LOGGER.info("TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: USD, DESTINATION: CAD");
-        BigDecimal newAmountOfOrigin = newAmountOfOriginInUSD;
+      BigDecimal newAmountOfOrigin = newAmountOfOriginInUSD;
       Mono<BigDecimal> destinyInCADMono = exchangeService.fromUSDtoCAD(newAmountOfDestinyInUSD);
       return destinyInCADMono.flatMap(
           destinyInCAD -> {
-              BigDecimal newAmountOfDestiny = destinyInCAD;
+            BigDecimal newAmountOfDestiny = destinyInCAD;
             return saveToDB(origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
           });
     } else if (origin.getIdCurrency() == 2 && destiny.getIdCurrency() == 2) {
@@ -200,8 +200,8 @@ public class TransferService {
       return Mono.zip(originInCADMono, destinyInCADMono)
           .flatMap(
               data -> {
-                  BigDecimal newAmountOfOrigin = data.getT1();
-                  BigDecimal newAmountOfDestiny = data.getT2();
+                BigDecimal newAmountOfOrigin = data.getT1();
+                BigDecimal newAmountOfDestiny = data.getT2();
                 return saveToDB(
                     origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
               });
@@ -217,7 +217,7 @@ public class TransferService {
     } else {
       LOGGER.info("TRANSFORM TO ACCOUNT CURRENCY -> CASE ORIGIN: USD, DESTINATION: USD");
       BigDecimal newAmountOfOrigin = newAmountOfOriginInUSD;
-        BigDecimal newAmountOfDestiny = newAmountOfDestinyInUSD;
+      BigDecimal newAmountOfDestiny = newAmountOfDestinyInUSD;
       return saveToDB(origin, destiny, transfer, newAmountOfOrigin, newAmountOfDestiny, tax);
     }
   }
@@ -249,6 +249,25 @@ public class TransferService {
             });
   }
 
+  public NewAmounts getNewAmounts(
+      BigDecimal tax,
+      BigDecimal amountToTransfer,
+      BigDecimal originAmount,
+      BigDecimal destinyAmount) {
+    BigDecimal taxValue = amountToTransfer.multiply(tax.divide(BigDecimal.valueOf(100)));
+    BigDecimal newAmountOfOrigin = originAmount.subtract(amountToTransfer).subtract(taxValue);
+    BigDecimal newAmountOfDestiny = destinyAmount.add(amountToTransfer);
+    return new NewAmounts(newAmountOfOrigin, newAmountOfDestiny);
+  }
+
+  public ResponseCreateTransactionDto createResponse(BigDecimal tax, BigDecimal cad) {
+    ResponseCreateTransactionDto responseCreateTransactionDto = new ResponseCreateTransactionDto();
+    responseCreateTransactionDto.setStatus("OK");
+    responseCreateTransactionDto.setTaxCollected(tax);
+    responseCreateTransactionDto.setCanadianExchange(cad);
+    return responseCreateTransactionDto;
+  }
+
   final class NewAmounts {
     private final BigDecimal newAmountOfOrigin;
     private final BigDecimal newAmountOfDestiny;
@@ -265,21 +284,5 @@ public class TransferService {
     public BigDecimal getNewAmountOfDestiny() {
       return newAmountOfDestiny;
     }
-  }
-
-  public NewAmounts getNewAmounts(
-          BigDecimal tax, BigDecimal amountToTransfer, BigDecimal originAmount, BigDecimal destinyAmount) {
-      BigDecimal taxValue = amountToTransfer.multiply(tax.divide(BigDecimal.valueOf(100)));
-      BigDecimal newAmountOfOrigin = originAmount.subtract(amountToTransfer).subtract(taxValue);
-      BigDecimal newAmountOfDestiny = destinyAmount.add(amountToTransfer);
-    return new NewAmounts(newAmountOfOrigin, newAmountOfDestiny);
-  }
-
-  public ResponseCreateTransactionDto createResponse(BigDecimal tax, BigDecimal cad) {
-    ResponseCreateTransactionDto responseCreateTransactionDto = new ResponseCreateTransactionDto();
-    responseCreateTransactionDto.setStatus("OK");
-    responseCreateTransactionDto.setTaxCollected(tax);
-    responseCreateTransactionDto.setCanadianExchange(cad);
-    return responseCreateTransactionDto;
   }
 }
