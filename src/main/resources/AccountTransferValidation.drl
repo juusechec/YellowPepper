@@ -2,7 +2,7 @@ import  com.yellowpepper.challenge.domain.AccountTransferValidationRequest;
 
 rule "account without funds"
     when
-        validationObject : AccountTransferValidationRequest( accountAmount < amountToTransfer * (1+(tax/100) ) );
+        validationObject : AccountTransferValidationRequest( getValid() );
     then
         validationObject.setAvailability("NO_FUNDS");
 end;

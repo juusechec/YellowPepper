@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -35,7 +36,7 @@ public class ExchangeService {
     return this.responseCache;
   }
 
-  public Mono<Double> fromUSDtoCAD(double usd) {
+  public Mono<BigDecimal> fromUSDtoCAD(BigDecimal usd) {
     return getInfoCurrenciesFromService()
         .map(
             body -> {
@@ -45,7 +46,7 @@ public class ExchangeService {
                     "CURRENCIES SERVICE FAILED CONNECTION NOT AVAILABLE TO TRANSFORM FROM USD TO CAD");
               } else {
                 saveCache(body);
-                double cad = usd * body.getRates().getCad();
+                BigDecimal cad = usd.multiply(BigDecimal.valueOf(body.getRates().getCad()));
                 LOGGER.log(Level.INFO, "From USD to CAD: {0}USD", usd);
                 LOGGER.log(Level.INFO, "From USD to CAD: {0}CAD", cad);
                 return cad;
@@ -53,7 +54,7 @@ public class ExchangeService {
             });
   }
 
-  public Mono<Double> fromCADtoUSD(double cad) {
+  public Mono<BigDecimal> fromCADtoUSD(BigDecimal cad) {
     return getInfoCurrenciesFromService()
         .map(
             body -> {
@@ -63,7 +64,7 @@ public class ExchangeService {
                     "CURRENCIES SERVICE FAILED CONNECTION NOT AVAILABLE TO TRANSFORM FROM CAD TO USD");
               } else {
                 saveCache(body);
-                double usd = cad / body.getRates().getCad();
+                BigDecimal usd = cad.divide(BigDecimal.valueOf(body.getRates().getCad()));
                 LOGGER.log(Level.INFO, "From CAD to USD: {0}CAD", cad);
                 LOGGER.log(Level.INFO, "From CAD to USD: {0}USD", usd);
                 return usd;

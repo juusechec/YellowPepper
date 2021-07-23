@@ -36,7 +36,7 @@ public class DroolsService {
   public AvailabilityTransfer getTransferAvailability(
       BigDecimal amountToTransfer,
       BigDecimal accountAmount,
-      Double tax,
+      BigDecimal tax,
       Integer timesAccountTransaction) {
     KieSession kieSession = kieContainer.newKieSession();
     AccountTransferValidationRequest accountTransferValidationRequest =

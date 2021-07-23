@@ -7,14 +7,14 @@ import java.math.BigDecimal;
 public class AccountTransferValidationRequest {
   private BigDecimal amountToTransfer;
   private BigDecimal accountAmount;
-  private Double tax;
+  private BigDecimal tax;
   private Integer timesAccountTransaction;
   private AvailabilityTransfer availability;
 
   public AccountTransferValidationRequest(
       BigDecimal amountToTransfer,
       BigDecimal accountAmount,
-      Double tax,
+      BigDecimal tax,
       Integer timesAccountTransaction) {
     this.amountToTransfer = amountToTransfer;
     this.accountAmount = accountAmount;
@@ -46,11 +46,11 @@ public class AccountTransferValidationRequest {
     this.availability = AvailabilityTransfer.valueOf(availability);
   }
 
-  public Double getTax() {
+  public BigDecimal getTax() {
     return tax;
   }
 
-  public void setTax(Double tax) {
+  public void setTax(BigDecimal tax) {
     this.tax = tax;
   }
 
@@ -60,5 +60,9 @@ public class AccountTransferValidationRequest {
 
   public void setTimesAccountTransaction(Integer timesAccountTransaction) {
     this.timesAccountTransaction = timesAccountTransaction;
+  }
+
+  public boolean getValid() {
+    return accountAmount.compareTo(amountToTransfer.multiply((tax.divide(BigDecimal.valueOf(100.0)).add(BigDecimal.valueOf(1.0))))) < 0;
   }
 }
